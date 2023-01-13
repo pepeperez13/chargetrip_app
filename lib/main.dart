@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:chargetrip_app/locations.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +39,11 @@ class MapSampleState extends State<MapSample> {
   TextEditingController initialLocationController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
 
+  Map<String, dynamic> initialLocation = {};
+  Map<String, dynamic> destinationLocation = {};
+
   Set<Marker> markers = <Marker>{};
+  Set<Polyline> polylines = <Polyline>{};
 
 
 
@@ -47,18 +53,23 @@ class MapSampleState extends State<MapSample> {
   );
 
 
-  void setMarker (LatLng coordenadas) {
+  void setMarker (Marker marker) {
     setState(() {
-      markers.add(Marker(
-          markerId: const MarkerId('marker'),
-          position: coordenadas,
-          icon: BitmapDescriptor.defaultMarker
-
-      ),
-
-      );
+      markers.add(marker);
     });
     print("PONIENDO MARKEEEEER");
+  }
+
+  void setPolyline (Polyline polyline) {
+    setState(() {
+      polylines.add(polyline);
+    });
+  }
+
+  // Debemos poner future y async ya que debe esperar a obtener los resultados por parte de la API
+  Future<void> saveLocations () async {
+      initialLocation = await LocationFinder().getPlace(initialLocationController.text);
+      destinationLocation = await LocationFinder().getPlace(destinationController.text);
   }
 
   @override
@@ -70,6 +81,8 @@ class MapSampleState extends State<MapSample> {
             mapType: MapType.normal,
             initialCameraPosition: _kGooglePlex,
             markers: markers,
+            polylines: polylines,
+            zoomControlsEnabled: false,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },
@@ -78,7 +91,7 @@ class MapSampleState extends State<MapSample> {
           Column(
             children: [
               const SizedBox(
-                height: 50,
+                height: 40,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -93,23 +106,20 @@ class MapSampleState extends State<MapSample> {
                         ),
                         filled: true,
                         fillColor: Colors.grey,
-                        //icon: Icon(Icons.person),
                         hintText: 'Enter your initial location',
-                        //labelText: 'Name *',
-
+                        labelText: 'Initial location',
+                          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
                       ),
                       controller: initialLocationController,
-                      onSaved: (String? value) {
-                        // This optional block of code can be used to run
-                        // code when the user saves the form.
-                      },
                     ),
                   ),
+                  /*
                   IconButton(onPressed: () async {
                     var place = await LocationFinder().getPlace(initialLocationController.text);
                     goToNewLocation(place);
                   },
                       icon: Icon(Icons.search)),
+                   */
                   const SizedBox(width: 10)
 
                   //IconButton(onPressed: () {}, icon: const Icon(Icons.search),)
@@ -129,18 +139,16 @@ class MapSampleState extends State<MapSample> {
                         ),
                         filled: true,
                         fillColor: Colors.grey,
-                        //icon: Icon(Icons.person),
                         hintText: 'Enter your final destination',
-                        //labelText: 'Name *',
+                        labelText: 'Final destination',
+                        labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
 
                       ),
                       controller: destinationController,
-                      onSaved: (String? value) {
-                        // This optional block of code can be used to run
-                        // code when the user saves the form.
-                      },
                     ),
                   ),
+                  const SizedBox(width: 10)
+                  /*
                   IconButton(onPressed: () async {
                     var place = await LocationFinder().getPlace(destinationController.text);
                     goToNewLocation(place);
@@ -149,6 +157,8 @@ class MapSampleState extends State<MapSample> {
                   const SizedBox(width: 10)
 
                   //IconButton(onPressed: () {}, icon: const Icon(Icons.search),)
+
+                   */
                 ],
               ),
 
@@ -161,12 +171,42 @@ class MapSampleState extends State<MapSample> {
       ),
 
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToTheLake,
-        label: const Text('To the lake!'),
-        icon: const Icon(Icons.directions_boat),
+        onPressed: () async {
+          // Guardamos ubiaciones de inicio y fin y encontramos la ruta
+          await saveLocations();
+          var route = await LocationFinder().getDirections(initialLocationController.text, destinationController.text);
+          goToRoute(route['start_location']['lat'], route['start_location']['lng'], route['polyline_decoded'], route['bounds_ne'], route['bounds_sw']) ;
+          //await saveLocations();
+
+        },
+        label: const Text('Go to destination'),
+        icon: const Icon(Icons.electrical_services),
       ),
     );
 
+
+  }
+
+  void placeMarkers ()  {
+    final double latitudI = initialLocation['geometry']['location']['lat'];
+    final double longitudI = initialLocation['geometry']['location']['lng'];
+    final double latitudD = destinationLocation['geometry']['location']['lat'];
+    final double longitudD = destinationLocation['geometry']['location']['lng'];
+
+    Marker markerOrigin = Marker(
+        markerId: const MarkerId('Initial Location'),
+        position: LatLng(latitudI, longitudI),
+        icon: BitmapDescriptor.defaultMarker
+    );
+
+    Marker markerDestiny = Marker(
+        markerId: const MarkerId('Final Destination'),
+        position: LatLng(latitudD, longitudD),
+        icon: BitmapDescriptor.defaultMarker
+    );
+
+    setMarker(markerOrigin);
+    setMarker(markerDestiny);
 
   }
 
@@ -179,16 +219,42 @@ class MapSampleState extends State<MapSample> {
     controller.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target: LatLng(latitud, longitud), zoom: 12)
     ));
-    markers.add(Marker(
-        markerId: const MarkerId('marker'),
+
+    Marker newMarker = Marker(
+        markerId: const MarkerId('Initial Destination'),
         position: LatLng(latitud, longitud),
         icon: BitmapDescriptor.defaultMarker
+    );
+    setMarker(newMarker);
+  }
+
+  Future<void> goToRoute(double latitude, double longitude, List<PointLatLng> points, Map<String, dynamic> boundsNe, Map<String, dynamic> boundsSw) async {
+    final GoogleMapController controller = await _controller.future;
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(latitude, longitude), zoom: 12)
     ));
 
+    Polyline newPolyline =  Polyline(
+      polylineId: PolylineId('route'),
+      width: 4,
+      color: Colors.lightGreenAccent,
+      points: points.map((point) => LatLng(point.latitude, point.longitude)).toList(),
+
+    );
+
+    placeMarkers();
+    setPolyline(newPolyline);
+
+    controller.animateCamera(
+        CameraUpdate.newLatLngBounds(
+            LatLngBounds(
+            southwest: LatLng(boundsSw['lat'], boundsSw['lng']),
+            northeast: LatLng(boundsNe['lat'], boundsNe['lng']),
+            ),
+          25),
+    );
+
   }
 
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    //controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
 }
