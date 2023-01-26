@@ -1,5 +1,5 @@
 import 'package:chargetrip_app/account_settings.dart';
-import 'package:chargetrip_app/bottom_navigation/route_map.dart';
+import 'package:chargetrip_app/route_map.dart';
 import 'package:chargetrip_app/car_settings.dart';
 import 'package:chargetrip_app/main.dart';
 import 'package:flutter/material.dart';
