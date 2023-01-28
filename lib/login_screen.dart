@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('SuPer Stocks'),
+          title: const Text('ChargeTrip'),
         ),
         body: FutureBuilder(
           future: _initializeFirebase(),
@@ -131,15 +131,14 @@ class _LoginPageState extends State<LoginPage> {
                                         _isProcessing = false;
                                       });
 
-                                      /*if (user != null) {
-                                        Navigator.of(context)
-                                            .pushReplacement(
+                                      if (user != null) {
+                                        Navigator.of(context).pushReplacement(
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                MyApp(user: user),
+                                                HomePage(user: user),
                                           ),
                                         );
-                                      }*/
+                                      }
                                     }
                                   },
                                   child: const Text(

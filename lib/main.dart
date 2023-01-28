@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:chargetrip_app/bottom_navigation/routes_nav.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:chargetrip_app/locations.dart';
 import 'package:chargetrip_app/bottom_navigation/navigator.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+
+import 'login_screen.dart';
 
 
 void main() {
@@ -24,13 +27,16 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: LoginPage(), // HomePage(),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  //const HomePage({Key? key}) : super(key: key);
+
+  final User user;
+  const HomePage({required this.user});
 
   @override
   State<HomePage> createState() => HomePageState();
