@@ -1,12 +1,14 @@
 import 'dart:ui';
 
-class Car {
-  String brand;
-  String model;
-  int range;
-  Image image;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-  Car (this.brand, this.model, this.range, this.image);
+class Car {
+  String brandModel;
+  int range;
+  AssetImage image;
+
+  Car (this.brandModel, this.range, this.image);
 
 
 }
