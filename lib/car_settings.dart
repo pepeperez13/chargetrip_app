@@ -9,12 +9,29 @@ class CarSettings extends StatefulWidget {
 
 class CarSettingsState extends State<CarSettings> {
 
+  
+
 
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Text('Car Settings')
+    return  Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+
+        children: const [
+          SizedBox(height: 80),
+          Center(
+            child: Text('Your car', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+          )
+
+
+
+
+
+        ],
+
+      )
 
     );
 
