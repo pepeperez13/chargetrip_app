@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:chargetrip_app/bottom_navigation/routes_nav.dart';
+import 'package:chargetrip_app/bottom_navigation/navigator_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -58,7 +58,8 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: navigatorBar,
-      body: RoutesNav(index: page),
+      body: NavigatorPages(index: page),
+
     );
   }
 

@@ -28,7 +28,7 @@ late Car currentCar = defaultCar;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    super.build(context); //Mantiene el estado aunque cambiemos de pagina
     return  Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,9 +55,18 @@ late Car currentCar = defaultCar;
           const SizedBox(height: 80),
           ClipRect(child:
             Image.asset(currentCar.image.assetName),
+          ),
+          const SizedBox(height: 20),
+          Container(
+            //color: Colors.green,
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+                color: Colors.green,
+                border: Border.all(color: Colors.black),
+                borderRadius: const BorderRadius.all(Radius.circular(30))
+            ),
+            child: Text('Available range: ${currentCar.range} KM', style: const TextStyle(fontSize: 20)),
           )
-
-
         ],
 
       ),
@@ -66,6 +75,7 @@ late Car currentCar = defaultCar;
 
   }
 
+  // Segun el nombre del coche seleccionado, nos guardamos toda la info de ese coche
   void updateCar() {
     Car car = c1;
     switch (selectedCar) {
@@ -85,8 +95,13 @@ late Car currentCar = defaultCar;
     });
   }
 
+  //Devuelve el coche actualmente seleccionado
+  Car getCurrentCar () {
+    return currentCar;
+  }
+
+  //Queremos que se mantenga el estado
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
 

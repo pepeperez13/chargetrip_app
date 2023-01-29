@@ -4,9 +4,9 @@ import 'package:chargetrip_app/car_info/car_settings.dart';
 import 'package:chargetrip_app/main.dart';
 import 'package:flutter/material.dart';
 
-class RoutesNav extends StatelessWidget {
+class NavigatorPages extends StatelessWidget {
   final int index;
-  const RoutesNav({Key? key, required this.index}) : super(key: key);
+  const NavigatorPages({Key? key, required this.index}) : super(key: key);
 
   @override
   Widget build (BuildContext context) {

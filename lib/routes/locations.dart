@@ -13,7 +13,7 @@ class LocationFinder {
     var json = jsonDecode(response.body);
     var placeID = json['candidates'][0]['place_id'] as String;
 
-    print("THE PLACE ID Is $placeID");
+    //print("THE PLACE ID Is $placeID");
     return placeID;
   }
 
@@ -27,7 +27,7 @@ class LocationFinder {
     var json = jsonDecode(response.body);
     var results = json['result'] as Map<String, dynamic>;
 
-    print("LOS RESULTADOS SON $results");
+    //print("LOS RESULTADOS SON $results");
     return results;
 
   }
@@ -43,16 +43,15 @@ class LocationFinder {
     var polyline =json['routes'][0]['overview_polyline']['points'];
 
     var results = {
+      'distance' : json['routes'][0]['legs'][0]['distance'],
       'bounds_ne': json['routes'][0]['bounds']['northeast'],
       'bounds_sw': json['routes'][0]['bounds']['southwest'],
       'start_location': json['routes'][0]['legs'][0]['start_location'],
       'end_location': json['routes'][0]['legs'][0]['end_location'],
-
-      'polyline_decoded': PolylinePoints().decodePolyline(polyline)
-
+      'polyline_decoded': PolylinePoints().decodePolyline(polyline),
     };
 
-    print(results);
+    print('lalalaalalllalaa  $results');
     return results;
 
 

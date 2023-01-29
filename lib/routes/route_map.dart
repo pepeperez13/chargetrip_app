@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chargetrip_app/car_info/car_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:chargetrip_app/routes/locations.dart';
@@ -13,7 +14,7 @@ class MapSample extends StatefulWidget {
   State<MapSample> createState() => MapSampleState();
 }
 
-class MapSampleState extends State<MapSample> {
+class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   TextEditingController initialLocationController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
@@ -53,6 +54,7 @@ class MapSampleState extends State<MapSample> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -92,16 +94,8 @@ class MapSampleState extends State<MapSample> {
                       controller: initialLocationController,
                     ),
                   ),
-                  /*
-                  IconButton(onPressed: () async {
-                    var place = await LocationFinder().getPlace(initialLocationController.text);
-                    goToNewLocation(place);
-                  },
-                      icon: Icon(Icons.search)),
-                   */
-                  const SizedBox(width: 10)
 
-                  //IconButton(onPressed: () {}, icon: const Icon(Icons.search),)
+                  const SizedBox(width: 10)
                 ],
               ),
               const SizedBox(height: 10),
@@ -155,7 +149,11 @@ class MapSampleState extends State<MapSample> {
           await saveLocations();
           var route = await LocationFinder().getDirections(initialLocationController.text, destinationController.text);
           goToRoute(route['start_location']['lat'], route['start_location']['lng'], route['polyline_decoded'], route['bounds_ne'], route['bounds_sw']) ;
-          //await saveLocations();
+
+          // Llamamos al metodo que calcula si hay suficiente rango y mostramos un dialog
+          showDialog(context: context, builder: (context) => enoughRange(route));
+
+
 
         },
         label: const Text('Go to destination'),
@@ -236,5 +234,35 @@ class MapSampleState extends State<MapSample> {
     );
 
   }
+  
+  AlertDialog enoughRange(Map<String, dynamic> route) {
+    late AlertDialog alertDialog;
+    // Comprobamos si la distancia a recorrer es mayor que el rango del coche
+     if (CarSettingsState().getCurrentCar().range < (route['distance']['value'])/1000 ) {
+       print('La distancia es::::' + (route['distance']['value'])/1000);
+       alertDialog = AlertDialog(
+         title: Text('Oh no!'),
+         content: Text('Your current car does''nt have enough range for this route'),
+         actions: [
+           TextButton(onPressed: (){Navigator.pop(context);}, child: Text('OK'))
+         ],
+         
+       );
+     }else {
+       alertDialog = AlertDialog(
+         title: Text('Congratulations!'),
+         content: Text('Your current car has enough range for this route'),
+         actions: [
+           TextButton(onPressed: (){Navigator.pop(context);}, child: Text('OK'))
+         ],
+
+       );
+     }
+     return alertDialog;
+  }
+
+  // Queremos que se mentenga el estado
+  @override
+  bool get wantKeepAlive => true;
 
 }
