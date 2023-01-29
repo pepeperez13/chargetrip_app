@@ -34,8 +34,6 @@ class NavigatorBarState extends State<NavigatorBar> {
               icon: Icon(Icons.account_circle),
               label: 'Account'
           ),
-
-
         ]);
   }
 }
