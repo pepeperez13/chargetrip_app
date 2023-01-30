@@ -43,7 +43,7 @@ class LocationFinder {
     var polyline =json['routes'][0]['overview_polyline']['points'];
 
     var results = {
-      'distance' : json['routes'][0]['legs'][0]['distance'],
+      'distance' : json['routes'][0]['legs'][0]['distance']['value'],
       'bounds_ne': json['routes'][0]['bounds']['northeast'],
       'bounds_sw': json['routes'][0]['bounds']['southwest'],
       'start_location': json['routes'][0]['legs'][0]['start_location'],

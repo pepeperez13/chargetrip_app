@@ -7,6 +7,8 @@ import 'package:chargetrip_app/routes/locations.dart';
 import 'package:chargetrip_app/bottom_navigation/navigator.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
+import '../car_info/car.dart';
+
 class MapSample extends StatefulWidget {
   const MapSample({Key? key}) : super(key: key);
 
@@ -25,7 +27,15 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
   Set<Marker> markers = <Marker>{};
   Set<Polyline> polylines = <Polyline>{};
 
+  // Necesitamos que esta variable (que se actualiza desde "car_settings" sea estática
+  // para que su valor no se pierda al pasar de la página de "car_settings" al propio mapa
+  static Car currentcar = CarSettingsState().defaultCar;
 
+  callback(car) {
+    //setState(() {
+      currentcar = car;
+    //});
+  }
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -121,25 +131,12 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
                     ),
                   ),
                   const SizedBox(width: 10)
-                  /*
-                  IconButton(onPressed: () async {
-                    var place = await LocationFinder().getPlace(destinationController.text);
-                    goToNewLocation(place);
-                  },
-                      icon: Icon(Icons.search)),
-                  const SizedBox(width: 10)
 
-                  //IconButton(onPressed: () {}, icon: const Icon(Icons.search),)
-
-                   */
                 ],
               ),
 
-
             ],
           )
-
-
         ],
       ),
 
@@ -238,11 +235,14 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
   AlertDialog enoughRange(Map<String, dynamic> route) {
     late AlertDialog alertDialog;
     // Comprobamos si la distancia a recorrer es mayor que el rango del coche
-     if (CarSettingsState().getCurrentCar().range < (route['distance']['value'])/1000 ) {
-       print('La distancia es::::' + (route['distance']['value'])/1000);
+    var distance = route['distance']/1000;
+    //var range = CarSettingsState().getCurrentCar().range;
+    var range = currentcar.range;
+     if (range < distance ) {
+       print(distance);
        alertDialog = AlertDialog(
-         title: Text('Oh no!'),
-         content: Text('Your current car does''nt have enough range for this route'),
+         title: const Text('Oh no!'),
+         content: const Text('Your current car does''nt have enough range for this route'),
          actions: [
            TextButton(onPressed: (){Navigator.pop(context);}, child: Text('OK'))
          ],
@@ -250,8 +250,8 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
        );
      }else {
        alertDialog = AlertDialog(
-         title: Text('Congratulations!'),
-         content: Text('Your current car has enough range for this route'),
+         title: const Text('Congratulations!'),
+         content: const Text('Your current car has enough range for this route'),
          actions: [
            TextButton(onPressed: (){Navigator.pop(context);}, child: Text('OK'))
          ],

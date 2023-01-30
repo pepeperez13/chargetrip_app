@@ -44,10 +44,6 @@ class NavigatorBarState extends State<NavigatorBar> {
         bottomNavigationBar: BottomNavigationBar(
         currentIndex: index,
         onTap: (int i){
-        //setState(() {
-          //index = i;
-          //widget.currentPage(i);
-         // });
           pageController.jumpToPage(i);
         },
         items: const [

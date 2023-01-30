@@ -1,3 +1,4 @@
+import 'package:chargetrip_app/routes/route_map.dart';
 import 'package:flutter/material.dart';
 
 import 'car.dart';
@@ -24,6 +25,7 @@ Car c5 = Car('Volkswagen ID.3', 545, const AssetImage('assets/VW-ID3.png'));
 Car defaultCar = Car('No Car selected', 0, const AssetImage('assets/default.png'));
 
 late Car currentCar = defaultCar;
+// currentcar no funciona no se actualiza y entonces el mapa detecta que el range es 0. mirar de hacer callback en vez de un metodo getcurrentcra. Idea: poner boton de save y hacer callback
 
 
   @override
@@ -46,10 +48,11 @@ late Car currentCar = defaultCar;
                   child: Text(item, style: const TextStyle(fontSize: 20)),
               )).toList(),
               onChanged: (item) {
-                setState(() {
-                  selectedCar = item!;
-                  updateCar();
-                });
+              super.setState(() {
+                selectedCar = item!;
+                updateCar();
+              });
+
               },
           ),
           const SizedBox(height: 80),
@@ -66,11 +69,11 @@ late Car currentCar = defaultCar;
                 borderRadius: const BorderRadius.all(Radius.circular(30))
             ),
             child: Text('Available range: ${currentCar.range} KM', style: const TextStyle(fontSize: 20)),
-          )
+          ),
         ],
 
       ),
-      //backgroundColor: Colors.grey,
+
     );
 
   }
@@ -92,12 +95,9 @@ late Car currentCar = defaultCar;
     }
     setState(() {
       currentCar = car;
+      MapSampleState().callback(car);
     });
-  }
 
-  //Devuelve el coche actualmente seleccionado
-  Car getCurrentCar () {
-    return currentCar;
   }
 
   //Queremos que se mantenga el estado
