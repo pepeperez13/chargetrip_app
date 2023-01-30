@@ -150,8 +150,6 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
           // Llamamos al metodo que calcula si hay suficiente rango y mostramos un dialog
           showDialog(context: context, builder: (context) => enoughRange(route));
 
-
-
         },
         label: const Text('Go to destination'),
         icon: const Icon(Icons.electrical_services),
@@ -238,23 +236,26 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
     var distance = route['distance']/1000;
     //var range = CarSettingsState().getCurrentCar().range;
     var range = currentcar.range;
+    String difference = (distance-range).toString().split('.')[0];
      if (range < distance ) {
        print(distance);
        alertDialog = AlertDialog(
-         title: const Text('Oh no!'),
-         content: const Text('Your current car does''nt have enough range for this route'),
+         title: const Text('Oh no!', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+         content: Text('Your current car does not have enough range for this route. Try buying a car that has at least $difference KM of extra range ;)',
+                        style: const TextStyle(fontSize: 18),),
          actions: [
-           TextButton(onPressed: (){Navigator.pop(context);}, child: Text('OK'))
+           TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('OK', style: TextStyle(fontSize: 20),))
          ],
-         
+         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(40))),
        );
      }else {
        alertDialog = AlertDialog(
-         title: const Text('Congratulations!'),
-         content: const Text('Your current car has enough range for this route'),
+         title: const Text('Congratulations!', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+         content: const Text('Your current car has enough range for this route!', style: TextStyle(fontSize: 18),),
          actions: [
-           TextButton(onPressed: (){Navigator.pop(context);}, child: Text('OK'))
+           TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('OK', style: TextStyle(fontSize: 20),))
          ],
+         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(40))),
 
        );
      }

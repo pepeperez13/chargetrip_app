@@ -13,7 +13,7 @@ class CarSettings extends StatefulWidget {
 
 class CarSettingsState extends State<CarSettings> with AutomaticKeepAliveClientMixin{
 late List<Car> carList;
-List<String> carNames = ['Tesla Model 3 LR', 'Tesla Model 3 Performance', 'Audi e-tron GT', 'Tesla Model S Plaid', 'Volkswagen ID.3'];
+List<String> carNames = ['Tesla Model 3 LR', 'Tesla Model 3 Performance', 'Audi e-tron GT', 'Tesla Model S Plaid', 'Volkswagen ID.3', 'Renault ZOE', 'Nissan Leaf'];
 String?  selectedCar;
 
 
@@ -22,6 +22,8 @@ Car c2 = Car('Tesla Model 3 Performance', 547, const AssetImage('assets/Model3_P
 Car c3 = Car('Audi e-tron GT', 458, const AssetImage('assets/AudiEtron-GT.png'));
 Car c4 = Car('Tesla Model S Plaid', 600, const AssetImage('assets/ModelS_Plaid.png'));
 Car c5 = Car('Volkswagen ID.3', 545, const AssetImage('assets/VW-ID3.png'));
+Car c6 = Car('Renault ZOE', 250, const AssetImage('assets/Renault_ZOE.png'));
+Car c7 = Car('Nissan Leaf', 355, const AssetImage('assets/Nissan_Leaf.png'));
 Car defaultCar = Car('No Car selected', 0, const AssetImage('assets/default.png'));
 
 late Car currentCar = defaultCar;
@@ -92,9 +94,14 @@ late Car currentCar = defaultCar;
         break;
       case   'Volkswagen ID.3': car = c5;
         break;
+      case   'Renault ZOE': car = c6;
+        break;
+      case   'Nissan Leaf': car = c7;
+      break;
     }
     setState(() {
       currentCar = car;
+      // Enviamos el coche seleccionado a la pagina de rutas
       MapSampleState().callback(car);
     });
 

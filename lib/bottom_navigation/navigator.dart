@@ -30,7 +30,7 @@ class NavigatorBarState extends State<NavigatorBar> {
   @override
   void initState() {
     super.initState();
-    children = [MapSample(), CarSettings(), AccountSettings(user: widget.user)];
+    children = [const MapSample(), const CarSettings(), AccountSettings(user: widget.user)];
   }
 
   @override
