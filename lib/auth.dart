@@ -1,26 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FireAuth {
-  // For registering a new user
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Registrem un nou user
   static Future<User?> registerUsingEmailPassword({
     String? name,
     String? email,
     String? password,
   }) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-
     try {
-      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email!,
         password: password!,
       );
-
-      user = userCredential.user!;
-      await user.updateProfile(displayName: name);
-      await user.reload();
-      user = auth.currentUser!;
+      User user = userCredential.user!;
+      await user.updateDisplayName(name);
+      return refreshUser(user);
     } on FirebaseAuthException catch (e) {
+      // Gestionem les exceptions en cas que la contrasenya sigui massa facil o el email ja existeixi a la base de dades
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
@@ -29,24 +27,20 @@ class FireAuth {
     } catch (e) {
       print(e);
     }
-
-    return user;
+    return null;
   }
 
-  // For signing in an user (have already registered)
+  // Per fer login amb un usuari ja registrat
   static Future<User?> signInUsingEmailPassword({
     String? email,
     String? password,
   }) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email!,
         password: password!,
       );
-      user = userCredential.user!;
+      return userCredential.user!;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
@@ -54,14 +48,15 @@ class FireAuth {
         print('Wrong password provided.');
       }
     }
-    return user;
+    return null;
   }
 
   static Future<User?> refreshUser(User user) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
     await user.reload();
-    User? refreshedUser = auth.currentUser;
-
-    return refreshedUser;
+    return _auth.currentUser;
   }
 }
+
+
+
+

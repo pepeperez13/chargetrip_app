@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../account_settings.dart';
@@ -5,9 +6,10 @@ import '../car_info/car_settings.dart';
 import '../routes/route_map.dart';
 
 class NavigatorBar extends StatefulWidget {
-  const NavigatorBar({Key? key, required this.currentPage}) : super(key: key);
+  const NavigatorBar({Key? key, required this.currentPage, required this.user}) : super(key: key);
 
   final Function currentPage;
+  final User? user;
 
   @override
   NavigatorBarState createState() => NavigatorBarState();
@@ -28,7 +30,7 @@ class NavigatorBarState extends State<NavigatorBar> {
   @override
   void initState() {
     super.initState();
-    children = [const MapSample(), const CarSettings(), const AccountSettings()];
+    children = [MapSample(), CarSettings(), AccountSettings(user: widget.user)];
   }
 
   @override

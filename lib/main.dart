@@ -22,9 +22,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'ChargeTrip',
       theme: ThemeData(
-
         primarySwatch: Colors.blue,
       ),
       home: LoginPage(), // HomePage(),
@@ -33,8 +32,6 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  //const HomePage({Key? key}) : super(key: key);
-
   final User user;
   const HomePage({required this.user});
 
@@ -44,7 +41,8 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   int page = 0;
-  NavigatorBar ?navigatorBar;
+  NavigatorBar? navigatorBar;
+
   @override
   void initState() {
     super.initState();
@@ -52,17 +50,14 @@ class HomePageState extends State<HomePage> {
       setState(() {
         page = i;
       });
-    });
+    }, user: widget.user);
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: navigatorBar,
-      body: NavigatorPages(index: page),
-
+      body: NavigatorPages(index: page, user: widget.user),
     );
   }
-
-
 }
 
