@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'main.dart';
+import '../main.dart';
+import 'auth_validator.dart';
 import 'register_screen.dart';
-import '../auth_validator.dart';
-import '../auth.dart';
+import 'auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -42,9 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         _focusPassword.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('ChargeTrip'),
-        ),
+
         body: FutureBuilder(
           future: _initializeFirebase(),
           builder: (context, snapshot) {
@@ -55,10 +53,17 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 24.0),
+                      padding: const EdgeInsets.only(bottom: 100.0),
+                      child: ClipRect(child:
+                      Image.asset('assets/chargetrip_logo.png', fit: BoxFit.fill,),
+                      )
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 12.0),
                       child: Text(
                         'Login',
-                        style: Theme.of(context).textTheme.headline2,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+
                       ),
                     ),
                     Form(
@@ -141,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                                       }
                                     }
                                   },
+                                  style: ElevatedButton.styleFrom( backgroundColor: Colors.blue[800]),
                                   child: const Text(
                                     'Sign In',
                                     style: TextStyle(color: Colors.white),
@@ -158,6 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                     );
                                   },
+                                  style: ElevatedButton.styleFrom( backgroundColor: Colors.blue[800]),
                                   child: const Text(
                                     'Register',
                                     style: TextStyle(color: Colors.white),

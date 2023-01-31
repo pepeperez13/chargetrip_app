@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../auth.dart';
-import '../auth_validator.dart';
-import 'main.dart';
+import 'auth.dart';
+
+import '../main.dart';
+import 'auth_validator.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -37,13 +38,20 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Register'),
+          backgroundColor: Colors.blue[800],
         ),
         body: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Padding(
+                    padding: const EdgeInsets.only(bottom:4),
+                     child: ClipRect(child:
+                    Image.asset('assets/chargetrip_logo.png', fit: BoxFit.fill,),
+                    ),
+                ),
                 Form(
                   key: _registerFormKey,
                   child: Column(
@@ -99,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 32.0),
+                      const SizedBox(height: 16.0),
                       _isProcessing
                           ? const CircularProgressIndicator()
                           : Row(
@@ -134,6 +142,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   }
                                 }
                               },
+                              style: ElevatedButton.styleFrom( backgroundColor: Colors.blue[800]),
                               child: const Text(
                                 'Sign up',
                                 style: TextStyle(color: Colors.white),

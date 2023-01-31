@@ -44,6 +44,7 @@ class NavigatorBarState extends State<NavigatorBar> {
           children: children,
         ),
         bottomNavigationBar: BottomNavigationBar(
+          fixedColor: Colors.blue[800],
         currentIndex: index,
         onTap: (int i){
           pageController.jumpToPage(i);

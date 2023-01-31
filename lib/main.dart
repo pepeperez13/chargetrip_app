@@ -8,7 +8,7 @@ import 'package:chargetrip_app/routes/locations.dart';
 import 'package:chargetrip_app/bottom_navigation/navigator.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
-import 'login_screen.dart';
+import 'authentication/login_screen.dart';
 
 
 void main() {

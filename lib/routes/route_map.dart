@@ -96,10 +96,10 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
                               borderRadius: BorderRadius.circular(50.0)
                           ),
                           filled: true,
-                          fillColor: Colors.grey,
+                          fillColor: Colors.blue[800],
                           hintText: 'Enter your initial location',
                           labelText: 'Initial location',
-                          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+                          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)
                       ),
                       controller: initialLocationController,
                     ),
@@ -121,10 +121,10 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
                               borderRadius: BorderRadius.circular(50.0)
                           ),
                           filled: true,
-                          fillColor: Colors.grey,
+                          fillColor: Colors.blue[800],
                           hintText: 'Enter your final destination',
                           labelText: 'Final destination',
-                          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+                          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
 
                       ),
                       controller: destinationController,
@@ -153,6 +153,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
         },
         label: const Text('Go to destination'),
         icon: const Icon(Icons.electrical_services),
+        backgroundColor: Colors.blue[800],
       ),
       //bottomNavigationBar: const NavigatorBar(),
     );
