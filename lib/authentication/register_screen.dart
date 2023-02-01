@@ -30,6 +30,7 @@ class RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      // Desfocalitza quan es clica a fora del formulari
       onTap: () {
         focusName.unfocus();
         focusEmail.unfocus();
@@ -46,6 +47,7 @@ class RegisterPageState extends State<RegisterPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                // Imatge del logotip
                 Padding(
                     padding: const EdgeInsets.only(bottom:4),
                      child: ClipRect(child:
@@ -56,6 +58,7 @@ class RegisterPageState extends State<RegisterPage> {
                   key: formKey,
                   child: Column(
                     children: <Widget>[
+                      // Camp per introduir el nom
                       TextFormField(
                         controller: nameTextController,
                         focusNode: focusName,
@@ -73,6 +76,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       const SizedBox(height: 16.0),
+                      // Camp per introduir el email
                       TextFormField(
                         controller: emailTextController,
                         focusNode: focusEmail,
@@ -90,6 +94,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       const SizedBox(height: 16.0),
+                      // Camp per introduir la contrasenya
                       TextFormField(
                         controller: passwordTextController,
                         focusNode: focusPassword,
