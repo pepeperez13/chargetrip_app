@@ -19,10 +19,10 @@ class FireAuth {
       return refreshUser(user);
     } on FirebaseAuthException catch (e) {
       // Gestionem les exceptions en cas que la contrasenya sigui massa facil o el email ja existeixi a la base de dades
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+      if (e.code == "weak-password") {
+        print("The password provided is too weak.");
+      } else if (e.code == "email-already-in-use") {
+        print("The email is already in use in another account. Use a new email.");
       }
     } catch (e) {
       print(e);
@@ -42,10 +42,10 @@ class FireAuth {
       );
       return userCredential.user!;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided.');
+      if (e.code == "user-not-found") {
+        print("We could not find a user with the specified email.");
+      } else if (e.code == "wrong-password") {
+        print("Wrong password.");
       }
     }
     return null;
