@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:chargetrip_app/car_info/car_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:chargetrip_app/routes/locations.dart';
 import 'package:chargetrip_app/bottom_navigation/navigator.dart';
@@ -26,10 +29,16 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
 
   Set<Marker> markers = <Marker>{};
   Set<Polyline> polylines = <Polyline>{};
+  Set<Circle> circles = <Circle>{};
 
   // Necesitamos que esta variable (que se actualiza desde "car_settings" sea estática
   // para que su valor no se pierda al pasar de la página de "car_settings" al propio mapa
   static Car currentcar = CarSettingsState().defaultCar;
+
+  List nearChargers = [];
+  String tokenKey = '';
+
+
 
   callback(car) {
     //setState(() {
@@ -73,10 +82,12 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
             initialCameraPosition: _kGooglePlex,
             markers: markers,
             polylines: polylines,
+            circles: circles,
             zoomControlsEnabled: false,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },
+            onTap: findChargers,
           ),
 
           Column(
@@ -262,6 +273,37 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
      }
      return alertDialog;
   }
+
+  void findChargers (LatLng point) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: point, zoom: 9.75)
+    ));
+
+    //Llamamos al metodo que encuentra los sitios cercanos y guardammos los resultados en una lista
+    var places = await LocationFinder().getPlaceDetails(point, 20000);
+    List<dynamic> areaChargers = places['results'] as List;
+
+    //markers = {};
+    int countElement = 0;
+
+    // Añadimos marcador para cada elemento
+    for (var element in areaChargers) {
+      //if (markers.length < 20) { // No queremos que se borren los markers de la ruta, si es que los hay (máximo se muestran 20)
+        setMarker(Marker(markerId: MarkerId(countElement.toString()),
+            position: LatLng(element['geometry']['location']['lat'],
+                element['geometry']['location']['lng'])));
+      //}
+      countElement++;
+    }
+
+    setState(() {
+      circles.add( Circle(circleId: CircleId('nearChargers'), center: point, fillColor: Colors.amber.withOpacity(0.2), radius: 20000, strokeColor: Colors.blue, strokeWidth: 1));
+    });
+
+  }
+
+
 
   // Queremos que se mentenga el estado
   @override
