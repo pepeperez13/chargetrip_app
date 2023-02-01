@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -51,10 +52,21 @@ class LocationFinder {
       'polyline_decoded': PolylinePoints().decodePolyline(polyline),
     };
 
-    print('lalalaalalllalaa  $results');
+    //print('lalalaalalllalaa  $results');
     return results;
+  }
 
+  Future<dynamic> getPlaceDetails (LatLng location, int distance) async {
+    var lat = location.latitude;
+    var long = location.longitude;
 
+    // Con la keyword, especificamos que solo queremos que aparezcanlos lugares que sean cargadores electricos
+    final String url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?&keyword=Electric%20Vehicle%20Charging%20Station&location=$lat,$long&radius=$distance&key=AIzaSyDb07faU3tiBmEKJjRe1KaTL_gtG8DhUcw';
+    //keyword=Electric%20Vehicle%20Charging%20Station
+    var response = await get(Uri.parse(url));
+    var json = jsonDecode(response.body);
+    print(json);
+    return json;
   }
 
 
