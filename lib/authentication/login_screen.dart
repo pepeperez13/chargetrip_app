@@ -11,40 +11,37 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
+class LoginPageState extends State<LoginPage> {
+  final formKey = GlobalKey<FormState>();
 
-  final _emailTextController = TextEditingController();
-  final _passwordTextController = TextEditingController();
+  // Controllers per als camps de text editables
+  final emailTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
 
-  final _focusEmail = FocusNode();
-  final _focusPassword = FocusNode();
+  final focusEmail = FocusNode();
+  final focusPassword = FocusNode();
 
-  bool _isProcessing = false;
+  bool isProcessing = false;
 
-  Future<FirebaseApp> _initializeFirebase() async {
+  Future<FirebaseApp> initializeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
-
-    User? user = FirebaseAuth.instance.currentUser;
-
     return firebaseApp;
   }
 
-  // Crea la organització de la pantalla del logi
+  // Crea la organització de la pantalla del login
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _focusEmail.unfocus();
-        _focusPassword.unfocus();
+        focusEmail.unfocus();
+        focusPassword.unfocus();
       },
       child: Scaffold(
-
         body: FutureBuilder(
-          future: _initializeFirebase(),
+          future: initializeFirebase(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return Padding(
@@ -67,13 +64,13 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     Form(
-                      key: _formKey,
+                      key: formKey,
                       child: Column(
                         children: <Widget>[
                           // Camp de text per introduir el e-mail
                           TextFormField(
-                            controller: _emailTextController,
-                            focusNode: _focusEmail,
+                            controller: emailTextController,
+                            focusNode: focusEmail,
                             validator: (value) => Validator.validateEmail(
                               email: value,
                             ),
@@ -90,8 +87,8 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 8.0),
                           // Camp de text per introduir la contrasenya
                           TextFormField(
-                            controller: _passwordTextController,
-                            focusNode: _focusPassword,
+                            controller: passwordTextController,
+                            focusNode: focusPassword,
                             obscureText: true,
                             validator: (value) => Validator.validatePassword(
                               password: value,
@@ -107,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           const SizedBox(height: 24.0),
-                          _isProcessing
+                          isProcessing
                               ? const CircularProgressIndicator()
                               : Row(
                             mainAxisAlignment:
@@ -117,23 +114,23 @@ class _LoginPageState extends State<LoginPage> {
                                 child: ElevatedButton(
                                   // Segons les dades introduides, realitza un procés de verificació o un altre
                                   onPressed: () async {
-                                    _focusEmail.unfocus();
-                                    _focusPassword.unfocus();
+                                    focusEmail.unfocus();
+                                    focusPassword.unfocus();
 
-                                    if (_formKey.currentState!.validate()) {
+                                    if (formKey.currentState!.validate()) {
                                       setState(() {
-                                        _isProcessing = true;
+                                        isProcessing = true;
                                       });
 
                                       User? user = await FireAuth
                                           .signInUsingEmailPassword(
-                                        email: _emailTextController.text,
+                                        email: emailTextController.text,
                                         password:
-                                        _passwordTextController.text,
+                                        passwordTextController.text,
                                       );
 
                                       setState(() {
-                                        _isProcessing = false;
+                                        isProcessing = false;
                                       });
 
                                       if (user != null) {
@@ -180,7 +177,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               );
             }
-
             return const Center(
               child: CircularProgressIndicator(),
             );

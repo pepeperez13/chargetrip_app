@@ -10,30 +10,30 @@ class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  RegisterPageState createState() => RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final _registerFormKey = GlobalKey<FormState>();
+class RegisterPageState extends State<RegisterPage> {
+  final formKey = GlobalKey<FormState>();
 
-  final _nameTextController = TextEditingController();
-  final _emailTextController = TextEditingController();
-  final _passwordTextController = TextEditingController();
+  final nameTextController = TextEditingController();
+  final emailTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
 
-  final _focusName = FocusNode();
-  final _focusEmail = FocusNode();
-  final _focusPassword = FocusNode();
+  final focusName = FocusNode();
+  final focusEmail = FocusNode();
+  final focusPassword = FocusNode();
 
-  bool _isProcessing = false;
+  bool isProcessing = false;
 
-  // Crea totes les dades a ser mostrades en la pantañña d'enregistrament
+  // Crea totes les dades a ser mostrades en la pantalla d'enregistrament
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _focusName.unfocus();
-        _focusEmail.unfocus();
-        _focusPassword.unfocus();
+        focusName.unfocus();
+        focusEmail.unfocus();
+        focusPassword.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -53,12 +53,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                 ),
                 Form(
-                  key: _registerFormKey,
+                  key: formKey,
                   child: Column(
                     children: <Widget>[
                       TextFormField(
-                        controller: _nameTextController,
-                        focusNode: _focusName,
+                        controller: nameTextController,
+                        focusNode: focusName,
                         validator: (value) => Validator.validateName(
                           name: value,
                         ),
@@ -74,8 +74,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        controller: _emailTextController,
-                        focusNode: _focusEmail,
+                        controller: emailTextController,
+                        focusNode: focusEmail,
                         validator: (value) => Validator.validateEmail(
                           email: value,
                         ),
@@ -91,8 +91,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        controller: _passwordTextController,
-                        focusNode: _focusPassword,
+                        controller: passwordTextController,
+                        focusNode: focusPassword,
                         obscureText: true,
                         validator: (value) => Validator.validatePassword(
                           password: value,
@@ -108,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       const SizedBox(height: 16.0),
-                      _isProcessing
+                      isProcessing
                           ? const CircularProgressIndicator()
                           : Row(
                         children: [
@@ -116,19 +116,19 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: ElevatedButton(
                               onPressed: () async {
                                 setState(() {
-                                  _isProcessing = true;
+                                  isProcessing = true;
                                 });
 
-                                if (_registerFormKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate()) {
                                   User? user = await FireAuth
                                       .registerUsingEmailPassword(
-                                    name: _nameTextController.text,
-                                    email: _emailTextController.text,
-                                    password: _passwordTextController.text,
+                                    name: nameTextController.text,
+                                    email: emailTextController.text,
+                                    password: passwordTextController.text,
                                   );
 
                                   setState(() {
-                                    _isProcessing = false;
+                                    isProcessing = false;
                                   });
 
                                   if (user != null) {
@@ -142,7 +142,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   }
                                 }
                               },
-                              style: ElevatedButton.styleFrom( backgroundColor: Colors.blue[800]),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[800]),
                               child: const Text(
                                 'Sign up',
                                 style: TextStyle(color: Colors.white),
