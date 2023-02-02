@@ -1,19 +1,15 @@
-import 'dart:async';
-
 import 'package:chargetrip_app/bottom_navigation/navigator_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:chargetrip_app/routes/locations.dart';
+
 import 'package:chargetrip_app/bottom_navigation/navigator.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 import 'authentication/login_screen.dart';
 
 
 void main() {
-  //Hacemos que la app solo se pueda ejecutar en vertical para evitar problemas
+  // Hacemos que la app solo se pueda ejecutar en vertical para evitar problemas
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(const MyApp()));
 }
