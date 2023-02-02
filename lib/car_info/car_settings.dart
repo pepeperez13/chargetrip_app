@@ -57,7 +57,7 @@ late Car currentCar = defaultCar;
 
               },
           ),
-          const SizedBox(height: 80),
+          const SizedBox(height: 30),
           ClipRect(child:
             Image.asset(currentCar.image.assetName),
           ),
@@ -72,6 +72,27 @@ late Car currentCar = defaultCar;
             ),
             child: Text('Available range: ${currentCar.range} KM', style: const TextStyle(fontSize: 20)),
           ),
+          const SizedBox(height:20,),
+          Row(
+            children: [
+              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                decoration: BoxDecoration(
+                  color: Colors.blue[800]?.withOpacity(0.7),
+                  border: Border.all(color: Colors.black),
+                  borderRadius: const BorderRadius.all(Radius.circular(30))
+                ),
+                child: const Text(
+                'Go to the map and check out if this \ncar has enough range for your route.\nRemember that you can check \nnearby chargers by tapping anywhere \nin the map.',
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+                )
+                ),
+              const SizedBox(width: 10)
+            ],
+          )
+
         ],
 
       ),

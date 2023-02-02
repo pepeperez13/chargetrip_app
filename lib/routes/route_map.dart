@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:chargetrip_app/car_info/car_settings.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +27,10 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
   Map<String, dynamic> initialLocation = {};
   Map<String, dynamic> destinationLocation = {};
 
-  Set<Marker> markers = <Marker>{};
+  Set<Marker> routeMarkers = <Marker>{};
   Set<Polyline> polylines = <Polyline>{};
   Set<Circle> circles = <Circle>{};
+  Set<Marker> chargerMarkers = <Marker>{};
 
   // Necesitamos que esta variable (que se actualiza desde "car_settings" sea estática
   // para que su valor no se pierda al pasar de la página de "car_settings" al propio mapa
@@ -54,7 +55,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
 
   void setMarker (Marker marker) {
     setState(() {
-      markers.add(marker);
+      routeMarkers.add(marker);
     });
     print("PONIENDO MARKEEEEER");
   }
@@ -80,7 +81,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
           GoogleMap(
             mapType: MapType.normal,
             initialCameraPosition: _kGooglePlex,
-            markers: markers,
+            markers: routeMarkers,
             polylines: polylines,
             circles: circles,
             zoomControlsEnabled: false,
@@ -107,10 +108,10 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
                               borderRadius: BorderRadius.circular(50.0)
                           ),
                           filled: true,
-                          fillColor: Colors.blue[800],
+                          fillColor: Colors.blue[800]?.withOpacity(0.8),
                           hintText: 'Enter your initial location',
                           labelText: 'Initial location',
-                          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)
+                          labelStyle: const TextStyle(fontSize: 18, color: Colors.white)
                       ),
                       controller: initialLocationController,
                     ),
@@ -132,10 +133,10 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
                               borderRadius: BorderRadius.circular(50.0)
                           ),
                           filled: true,
-                          fillColor: Colors.blue[800],
+                          fillColor: Colors.blue[800]?.withOpacity(0.8),
                           hintText: 'Enter your final destination',
                           labelText: 'Final destination',
-                          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                          labelStyle: const TextStyle(fontSize: 18, color: Colors.white),
 
                       ),
                       controller: destinationController,
@@ -277,30 +278,44 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
   void findChargers (LatLng point) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: point, zoom: 9.75)
+        CameraPosition(target: point, zoom: 11)
     ));
 
     //Llamamos al metodo que encuentra los sitios cercanos y guardammos los resultados en una lista
-    var places = await LocationFinder().getPlaceDetails(point, 20000);
+    var places = await LocationFinder().getPlaceDetails(point, 7500);
     List<dynamic> areaChargers = places['results'] as List;
 
-    //markers = {};
+    chargerMarkers = {};
     int countElement = 0;
+    final Uint8List chargerMarker;
+    chargerMarker = await getBytesFromAsset();
 
     // Añadimos marcador para cada elemento
     for (var element in areaChargers) {
-      //if (markers.length < 20) { // No queremos que se borren los markers de la ruta, si es que los hay (máximo se muestran 20)
-        setMarker(Marker(markerId: MarkerId(countElement.toString()),
-            position: LatLng(element['geometry']['location']['lat'],
-                element['geometry']['location']['lng'])));
-      //}
+        setMarker(
+            Marker(
+                markerId: MarkerId(countElement.toString()),
+                position: LatLng(element['geometry']['location']['lat'], element['geometry']['location']['lng']),
+                icon: BitmapDescriptor.fromBytes(chargerMarker)
+            )
+        );
+
       countElement++;
     }
 
     setState(() {
-      circles.add( Circle(circleId: CircleId('nearChargers'), center: point, fillColor: Colors.amber.withOpacity(0.2), radius: 20000, strokeColor: Colors.blue, strokeWidth: 1));
+      circles.add( Circle(circleId: CircleId('nearChargers'), center: point, fillColor: Colors.amber.withOpacity(0.2), radius: 9000, strokeColor: Colors.blue, strokeWidth: 1));
     });
 
+  }
+
+  //Obtiene los bytes para el marker del cargador electrico
+  Future<Uint8List> getBytesFromAsset() async {
+    ByteData data = await rootBundle.load('assets/chargerMarker.png');
+
+    Codec codec = await instantiateImageCodec(data.buffer.asUint8List(), targetWidth: 200);
+    FrameInfo frameInfo = await codec.getNextFrame();
+    return(await frameInfo.image.toByteData(format: ImageByteFormat.png))!.buffer.asUint8List();
   }
 
 
