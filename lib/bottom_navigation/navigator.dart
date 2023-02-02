@@ -15,6 +15,7 @@ class NavigatorBar extends StatefulWidget {
   NavigatorBarState createState() => NavigatorBarState();
 }
 
+/// Clase que se va a encargar de moverse por las diferentes pantallas según quiera el usuario
 class NavigatorBarState extends State<NavigatorBar> {
   int index = 0;
   late List<Widget> children;
@@ -49,6 +50,7 @@ class NavigatorBarState extends State<NavigatorBar> {
         onTap: (int i){
           pageController.jumpToPage(i);
         },
+            // Items de la barra inferior en si
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.electric_bolt_outlined),

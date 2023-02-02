@@ -3,8 +3,9 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
+/// Clase que realiza conexiones con las API de google maps
+
 class LocationFinder {
-  //final String key = 'API_KEY';
 
   // Obtiene el código del lugar que hemos buscado
   Future<String> getPlaceID (String input) async {
@@ -14,11 +15,11 @@ class LocationFinder {
     var json = jsonDecode(response.body);
     var placeID = json['candidates'][0]['place_id'] as String;
 
-    //print("THE PLACE ID Is $placeID");
     return placeID;
   }
 
 
+  // Encuntra información de un sitio especifico
   Future<Map<String, dynamic>> getPlace (String input) async {
     final placeID = await getPlaceID(input);
 
@@ -28,19 +29,16 @@ class LocationFinder {
     var json = jsonDecode(response.body);
     var results = json['result'] as Map<String, dynamic>;
 
-    //print("LOS RESULTADOS SON $results");
     return results;
-
   }
 
+  // Obtiene direcciones entre las dos ubicaciones seleccionadas
   Future<Map<String, dynamic>> getDirections (String origin, String destiny) async {
-
     final String url = 'https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$destiny&key=AIzaSyDb07faU3tiBmEKJjRe1KaTL_gtG8DhUcw';
 
     var response = await get(Uri.parse(url));
     var json = jsonDecode(response.body);
 
-    print(json);
     var polyline =json['routes'][0]['overview_polyline']['points'];
 
     var results = {
@@ -52,22 +50,21 @@ class LocationFinder {
       'polyline_decoded': PolylinePoints().decodePolyline(polyline),
     };
 
-    //print('lalalaalalllalaa  $results');
     return results;
   }
 
+  // Encontrará los cargadores eléctricos de una zona determinada
   Future<dynamic> getPlaceDetails (LatLng location, int distance) async {
     var lat = location.latitude;
     var long = location.longitude;
 
     // Con la keyword, especificamos que solo queremos que aparezcanlos lugares que sean cargadores electricos
     final String url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?&keyword=Electric%20Vehicle%20Charging%20Station&location=$lat,$long&radius=$distance&key=AIzaSyDb07faU3tiBmEKJjRe1KaTL_gtG8DhUcw';
-    //keyword=Electric%20Vehicle%20Charging%20Station
+
     var response = await get(Uri.parse(url));
     var json = jsonDecode(response.body);
-    print(json);
+
     return json;
   }
-
 
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:chargetrip_app/car_info/car_settings.dart';
@@ -7,10 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:chargetrip_app/routes/locations.dart';
-import 'package:chargetrip_app/bottom_navigation/navigator.dart';
+
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
-import '../car_info/car.dart';
+import 'package:chargetrip_app/car_info/car.dart';
+
+
+/// Esta clase contiene toda la visualización y acciones que ocurren en la pantalla del mapa
 
 class MapSample extends StatefulWidget {
   const MapSample({Key? key}) : super(key: key);
@@ -20,31 +22,27 @@ class MapSample extends StatefulWidget {
 }
 
 class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin {
+  // Controladores del mapa y de los textFormField
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   TextEditingController initialLocationController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
 
+  // Guardan localizaciones inicial y final de la ruta
   Map<String, dynamic> initialLocation = {};
   Map<String, dynamic> destinationLocation = {};
 
+  // Marcadores, lineas y circulos que tendrá el mapa
   Set<Marker> routeMarkers = <Marker>{};
   Set<Polyline> polylines = <Polyline>{};
   Set<Circle> circles = <Circle>{};
-  Set<Marker> chargerMarkers = <Marker>{};
 
   // Necesitamos que esta variable (que se actualiza desde "car_settings" sea estática
   // para que su valor no se pierda al pasar de la página de "car_settings" al propio mapa
   static Car currentcar = CarSettingsState().defaultCar;
 
-  List nearChargers = [];
-  String tokenKey = '';
-
-
-
+  // Funcion que se llama desde car_settings para actualizar el coche actual
   callback(car) {
-    //setState(() {
       currentcar = car;
-    //});
   }
 
   static const CameraPosition _kGooglePlex = CameraPosition(
@@ -57,7 +55,6 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
     setState(() {
       routeMarkers.add(marker);
     });
-    print("PONIENDO MARKEEEEER");
   }
 
   void setPolyline (Polyline polyline) {
@@ -78,6 +75,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
     return Scaffold(
       body: Stack(
         children: [
+          // Mapa de fondo (stack)
           GoogleMap(
             mapType: MapType.normal,
             initialCameraPosition: _kGooglePlex,
@@ -92,6 +90,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
           ),
 
           Column(
+            // Columna que contiene los dos TextFormField
             children: [
               const SizedBox(
                 height: 40,
@@ -116,7 +115,6 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
                       controller: initialLocationController,
                     ),
                   ),
-
                   const SizedBox(width: 10)
                 ],
               ),
@@ -143,15 +141,13 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
                     ),
                   ),
                   const SizedBox(width: 10)
-
                 ],
               ),
-
             ],
           )
         ],
       ),
-
+      // Botón que debe apretarse para trazar una ruta
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           // Guardamos ubiaciones de inicio y fin y encontramos la ruta
@@ -173,6 +169,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
 
   }
 
+  // Método que pone los marcadores de ruta (inicio y fin)
   void placeMarkers ()  {
     final double latitudI = initialLocation['geometry']['location']['lat'];
     final double longitudI = initialLocation['geometry']['location']['lng'];
@@ -196,24 +193,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
 
   }
 
-
-  Future<void> goToNewLocation(Map<String, dynamic> location) async {
-    final double latitud = location['geometry']['location']['lat'];
-    final double longitud = location['geometry']['location']['lng'];
-
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(latitud, longitud), zoom: 12)
-    ));
-
-    Marker newMarker = Marker(
-        markerId: const MarkerId('Initial Destination'),
-        position: LatLng(latitud, longitud),
-        icon: BitmapDescriptor.defaultMarker
-    );
-    setMarker(newMarker);
-  }
-
+  // Método que mueve la cámara y dibuja la línea de la ruta especificada
   Future<void> goToRoute(double latitude, double longitude, List<PointLatLng> points, Map<String, dynamic> boundsNe, Map<String, dynamic> boundsSw) async {
     final GoogleMapController controller = await _controller.future;
 
@@ -247,11 +227,10 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
     late AlertDialog alertDialog;
     // Comprobamos si la distancia a recorrer es mayor que el rango del coche
     var distance = route['distance']/1000;
-    //var range = CarSettingsState().getCurrentCar().range;
     var range = currentcar.range;
     String difference = (distance-range).toString().split('.')[0];
+    // Segun si hay suficiente autonomía o no, se muestra un AlertDialog u otro
      if (range < distance ) {
-       print(distance);
        alertDialog = AlertDialog(
          title: const Text('Oh no!', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
          content: Text('Your current car does not have enough range for this route. Try buying a car that has at least $difference KM of extra range ;)',
@@ -269,12 +248,12 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
            TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('OK', style: TextStyle(fontSize: 20),))
          ],
          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(40))),
-
        );
      }
      return alertDialog;
   }
 
+  // Cuando el usuario aprieta en un lugar del mapa, trazamos un circulo de radio 9000 y mostramos todos los cargadores de EV que haya en el área
   void findChargers (LatLng point) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
@@ -285,12 +264,11 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
     var places = await LocationFinder().getPlaceDetails(point, 7500);
     List<dynamic> areaChargers = places['results'] as List;
 
-    chargerMarkers = {};
     int countElement = 0;
     final Uint8List chargerMarker;
     chargerMarker = await getBytesFromAsset();
 
-    // Añadimos marcador para cada elemento
+    // Añadimos marcador para cada elemento encontrado
     for (var element in areaChargers) {
         setMarker(
             Marker(
@@ -299,7 +277,6 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
                 icon: BitmapDescriptor.fromBytes(chargerMarker)
             )
         );
-
       countElement++;
     }
 
@@ -318,9 +295,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
     return(await frameInfo.image.toByteData(format: ImageByteFormat.png))!.buffer.asUint8List();
   }
 
-
-
-  // Queremos que se mentenga el estado
+  // Queremos que se mentenga el estado de la pantalla aunque salgamos de esta
   @override
   bool get wantKeepAlive => true;
 

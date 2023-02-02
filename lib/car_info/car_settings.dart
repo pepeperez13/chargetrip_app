@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'car.dart';
 
+/// Esta clase cotiene y gestiona todas las acciones que se hacen en la parte de configuración del vehiculo
 
 class CarSettings extends StatefulWidget {
   const CarSettings({Key? key}) : super(key: key);
@@ -12,10 +13,10 @@ class CarSettings extends StatefulWidget {
 }
 
 class CarSettingsState extends State<CarSettings> with AutomaticKeepAliveClientMixin{
-late List<Car> carList;
+// Definimos los valores que aparecerán en el dropdown
 List<String> carNames = ['Tesla Model 3 LR', 'Tesla Model 3 Performance', 'Audi e-tron GT', 'Tesla Model S Plaid', 'Volkswagen ID.3', 'Renault ZOE', 'Nissan Leaf'];
+// String que cotendrá el vehiculo seleccionado en cualquier momento
 String?  selectedCar;
-
 
 Car c1 = Car('Tesla Model 3 LR', 602, const AssetImage('assets/Model3_LongRange.png'));
 Car c2 = Car('Tesla Model 3 Performance', 547, const AssetImage('assets/Model3_Performance.png'));
@@ -26,9 +27,8 @@ Car c6 = Car('Renault ZOE', 250, const AssetImage('assets/Renault_ZOE.png'));
 Car c7 = Car('Nissan Leaf', 355, const AssetImage('assets/Nissan_Leaf.png'));
 Car defaultCar = Car('No Car selected', 0, const AssetImage('assets/default.png'));
 
+// Car seleccionado, lo inicializamos al default (coche vacío)
 late Car currentCar = defaultCar;
-// currentcar no funciona no se actualiza y entonces el mapa detecta que el range es 0. mirar de hacer callback en vez de un metodo getcurrentcra. Idea: poner boton de save y hacer callback
-
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +41,7 @@ late Car currentCar = defaultCar;
           const Center(
             child: Text('Your car', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
           ),
+          // DropdownButton para escoger el coche
           DropdownButton<String>(
             disabledHint: null,
               hint: const Text('Select your car'),
@@ -54,14 +55,15 @@ late Car currentCar = defaultCar;
                 selectedCar = item!;
                 updateCar();
               });
-
               },
           ),
           const SizedBox(height: 30),
+          // Mostramos imagen del coche seleccionado
           ClipRect(child:
             Image.asset(currentCar.image.assetName),
           ),
           const SizedBox(height: 20),
+          // Mostramos autonomia del coche actual
           Container(
             //color: Colors.green,
             padding: EdgeInsets.all(20.0),
@@ -73,6 +75,7 @@ late Car currentCar = defaultCar;
             child: Text('Available range: ${currentCar.range} KM', style: const TextStyle(fontSize: 20)),
           ),
           const SizedBox(height:20,),
+          // Añadimos texto explicando qué funcionalidades tiene la app
           Row(
             children: [
               const SizedBox(width: 10),
@@ -92,13 +95,9 @@ late Car currentCar = defaultCar;
               const SizedBox(width: 10)
             ],
           )
-
         ],
-
       ),
-
     );
-
   }
 
   // Segun el nombre del coche seleccionado, nos guardamos toda la info de ese coche
@@ -131,6 +130,5 @@ late Car currentCar = defaultCar;
   //Queremos que se mantenga el estado
   @override
   bool get wantKeepAlive => true;
-
 
 }

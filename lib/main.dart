@@ -13,7 +13,7 @@ import 'authentication/login_screen.dart';
 
 
 void main() {
-  //Hacemos que la app solo se puede ejecutar en vertical para evitar problemas
+  //Hacemos que la app solo se pueda ejecutar en vertical para evitar problemas
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(const MyApp()));
 }
